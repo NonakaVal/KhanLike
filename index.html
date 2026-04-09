@@ -14,115 +14,234 @@
     --blue-deep: #1a4fa0;
     --white: #ffffff;
     --card-radius: 24px;
-    --shadow-soft: 0 8px 30px rgba(0,0,0,0.12);
-    --shadow-hover: 0 16px 40px rgba(0,0,0,0.20);
+    --shadow-soft: 0 8px 32px rgba(0,0,0,0.13);
+    --shadow-hover: 0 20px 52px rgba(0,0,0,0.22);
   }
 
   body {
     font-family: 'Nunito', sans-serif;
-    background: radial-gradient(circle at top left, #8de0ff 0%, #5bc8f5 40%, #1a6fa8 100%);
+    background: radial-gradient(ellipse at top, #8de0ff 0%, #5bc8f5 45%, #1a6fa8 100%);
     min-height: 100vh;
     overflow-x: hidden;
     color: var(--blue-deep);
   }
 
-  /* ─── HEADER SIMPLIFICADO ─── */
+  .stars-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .star { position: absolute; animation: floatStar linear infinite; opacity: 0; }
+  @keyframes floatStar {
+    0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.7; }
+    90%  { opacity: 0.5; }
+    100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+  }
+
   header {
-    background: rgba(26, 79, 160, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(26, 79, 160, 0.97);
+    backdrop-filter: blur(12px);
     padding: 0 32px;
-    height: 76px;
+    height: 72px;
     display: flex;
     align-items: center;
-    justify-content: center; /* Centralizado para foco total */
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    justify-content: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
     position: sticky;
     top: 0;
     z-index: 100;
   }
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    text-decoration: none;
-    transition: transform 0.2s;
-  }
-  .logo:hover { transform: scale(1.05); }
-
+  .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; transition: transform 0.2s; }
+  .logo:hover { transform: scale(1.04); }
   .logo-icon {
-    width: 48px;
-    height: 48px;
+    width: 46px; height: 46px;
     background: var(--yellow);
-    border-radius: 14px;
+    border-radius: 13px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 28px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    font-size: 26px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.22);
   }
-
-  .logo-text {
-    font-size: 1.8rem; font-weight: 900; color: var(--white);
-    letter-spacing: -0.5px;
-  }
+  .logo-text { font-size: 1.75rem; font-weight: 900; color: var(--white); letter-spacing: -0.5px; }
   .logo-text span { color: var(--yellow); }
 
-  /* ─── HERO ─── */
-  .hero { text-align: center; padding: 60px 24px 40px; position: relative; }
-  .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; color: white; line-height: 1.1; margin-bottom: 20px; text-shadow: 0 4px 16px rgba(0,0,0,0.2); }
-  .hero h1 em { font-style: normal; color: var(--yellow); display: block; }
-  .hero p { font-size: 1.25rem; color: rgba(255,255,255,0.95); max-width: 580px; margin: 0 auto 36px; font-weight: 700; line-height: 1.5; }
-
-  /* ─── SECTION & CARDS ─── */
-  .section { position: relative; z-index: 1; padding: 20px 20px 60px; max-width: 1000px; margin: 0 auto; }
-  .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-  
-  .activity-card {
-    background: white; border-radius: var(--card-radius); overflow: hidden;
-    box-shadow: var(--shadow-soft); cursor: pointer; text-decoration: none;
-    display: flex; flex-direction: column; border: 4px solid transparent;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  .section {
+    position: relative; z-index: 1;
+    padding: 44px 24px 64px;
+    max-width: 1040px;
+    margin: 0 auto;
   }
-  .activity-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); border-color: rgba(255, 255, 255, 0.5); }
-  .card-thumb { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 80px; transition: transform 0.3s; }
-  .activity-card:hover .card-thumb { transform: scale(1.05); }
-  .card-body { padding: 20px 24px; flex-grow: 1; }
-  .card-title { font-size: 1.4rem; font-weight: 900; color: var(--blue-deep); margin-bottom: 8px; line-height: 1.2; }
-  .card-desc { font-size: 1rem; color: #556; font-weight: 600; line-height: 1.4; }
-  .theme-blue { background: linear-gradient(135deg, #5bc8f5, #3a9ed4); }
 
-  footer { background: var(--blue-deep); color: rgba(255,255,255,0.8); text-align: center; padding: 30px 20px; font-weight: 700; }
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 22px;
+  }
+
+  .activity-card {
+    background: white;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+    text-decoration: none;
+    display: flex; flex-direction: column;
+    border: 4px solid transparent;
+    transition: all 0.32s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: fadeUp 0.5s ease both;
+    position: relative;
+  }
+  .activity-card:hover {
+    transform: translateY(-9px) scale(1.015);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(255,255,255,0.55);
+  }
+
+  .card-thumb {
+    height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 76px;
+    transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative; overflow: hidden;
+  }
+  .card-thumb::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.07) 100%);
+  }
+  .activity-card:hover .card-thumb { transform: scale(1.07); }
+
+  .card-tag {
+    position: absolute; top: 13px; right: 13px;
+    background: rgba(255,255,255,0.92);
+    color: var(--blue-deep);
+    font-weight: 800; font-size: 0.73rem;
+    padding: 4px 11px; border-radius: 50px;
+    z-index: 2;
+    backdrop-filter: blur(4px);
+  }
+
+  .card-body { padding: 18px 22px 22px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+  .card-title { font-size: 1.35rem; font-weight: 900; color: var(--blue-deep); line-height: 1.2; }
+  .card-desc  { font-size: 0.9rem; color: #6678aa; font-weight: 600; line-height: 1.5; flex: 1; }
+
+  .card-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .chip {
+    background: #eef3ff; border: 2px solid #d4ddfa;
+    border-radius: 50px; padding: 3px 11px;
+    font-size: 0.78rem; font-weight: 800; color: var(--blue-deep);
+  }
+
+  .theme-blue   { background: linear-gradient(135deg, #5bc8f5 0%, #2a7fd4 100%); }
+  .theme-purple { background: linear-gradient(135deg, #c77dff 0%, #7b2fff 100%); }
+  .theme-green  { background: linear-gradient(135deg, #5de87a 0%, #1daa50 100%); }
+  .theme-orange { background: linear-gradient(135deg, #FFD740 0%, #ff9800 100%); }
+
+  .card-soon { opacity: 0.68; pointer-events: none; filter: grayscale(0.25); }
+  .card-soon .card-tag { background: #ffd740; color: #7a5000; }
+
+  footer {
+    background: var(--blue-deep);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 28px 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    position: relative; z-index: 1;
+  }
   footer strong { color: var(--yellow); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 560px) {
+    .section { padding: 28px 16px 48px; }
+  }
 </style>
 </head>
 <body>
 
+<div class="stars-bg" id="starsBg"></div>
+
 <header>
   <a href="index.html" class="logo">
     <div class="logo-icon">🎓</div>
-    <span class="logo-text">Kan<span>Academy</span></span>
+    <span class="logo-text">Khan<span>Like</span></span>
   </a>
 </header>
 
-<section class="hero">
-  <div style="position:relative;z-index:1;">
-    
-  </div>
-</section>
-
 <div class="section">
   <div class="activities-grid">
-    <a href="memory-game.html" class="activity-card">
+
+    <a href="memory-game.html" class="activity-card" style="animation-delay:0.05s">
+      <div class="card-tag">🟢 Disponível</div>
       <div class="card-thumb theme-blue">🧩</div>
       <div class="card-body">
         <div class="card-title">Encontre os Pares</div>
-       
+        <div class="card-desc">Vire as cartas e encontre os pares! Treina memória e concentração.</div>
+        <div class="card-chips">
+          <span class="chip">🧠 Memória</span>
+          <span class="chip">⭐ 3 níveis</span>
+          <span class="chip">⏱ Timer</span>
+        </div>
       </div>
     </a>
+
+    <div class="activity-card card-soon" style="animation-delay:0.12s">
+      <div class="card-tag">🔜 Em breve</div>
+      <div class="card-thumb theme-green">🔢</div>
+      <div class="card-body">
+        <div class="card-title">Contagem Divertida</div>
+        <div class="card-desc">Aprenda a contar com objetos coloridos e animações encantadoras!</div>
+        <div class="card-chips">
+          <span class="chip">🔢 Matemática</span>
+          <span class="chip">🌈 Colorido</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-card card-soon" style="animation-delay:0.19s">
+      <div class="card-tag">🔜 Em breve</div>
+      <div class="card-thumb theme-purple">🔤</div>
+      <div class="card-body">
+        <div class="card-title">Caça ao Alfabeto</div>
+        <div class="card-desc">Descubra letras escondidas e forme palavras mágicas!</div>
+        <div class="card-chips">
+          <span class="chip">🔤 Português</span>
+          <span class="chip">🎯 Leitura</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-card card-soon" style="animation-delay:0.26s">
+      <div class="card-tag">🔜 Em breve</div>
+      <div class="card-thumb theme-orange">🎨</div>
+      <div class="card-body">
+        <div class="card-title">Mundo das Cores</div>
+        <div class="card-desc">Pinte cenários e aprenda sobre cores primárias e secundárias!</div>
+        <div class="card-chips">
+          <span class="chip">🎨 Arte</span>
+          <span class="chip">🌈 Cores</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <footer>
-  
+  Feito com <strong>muito amor</strong> para pequenos exploradores · KanAcademy © 2025
 </footer>
 
+<script>
+const bg = document.getElementById('starsBg');
+const em = ['⭐','✨','💫','🌟','🎈','🌈'];
+for (let i = 0; i < 16; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.textContent = em[i % em.length];
+  s.style.cssText = `left:${Math.random()*100}%;font-size:${13+Math.random()*12}px;animation-duration:${9+Math.random()*11}s;animation-delay:${Math.random()*12}s`;
+  bg.appendChild(s);
+}
+</script>
 </body>
 </html>
