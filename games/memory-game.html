@@ -17,7 +17,6 @@
     --red:        #ff5555;
     --card-back:  #2a7fd4;
     --topbar-h:   64px;
-    --diffbar-h:  64px;
     --botbar-h:   88px;
   }
 
@@ -41,20 +40,24 @@
     box-shadow: 0 4px 20px rgba(0,0,0,.25);
     z-index: 10;
   }
-  .back-btn {
+
+  .back-link {
     color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
     font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.15);
     padding: 8px 18px;
     border-radius: 50px;
-    background: rgba(255,255,255,.15);
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: background 0.2s;
-    white-space: nowrap;
+    transition: background 0.2s, transform 0.2s;
   }
-  .back-btn:hover { background: rgba(255,255,255,.25); }
-  .topbar-title { font-size: 1.2rem; font-weight: 900; color: #fff; flex: 1; }
+  .back-link:hover { background: rgba(255,255,255,0.25); }
+  .back-link:active { transform: scale(0.95); }
+
+  .topbar-spacer { flex: 1; }
 
   .sound-toggle {
     background: rgba(255,255,255,.15);
@@ -95,32 +98,6 @@
   }
   .timer-display.warning { color: #ff6b6b; animation: timerPulse 0.5s ease infinite alternate; }
   @keyframes timerPulse { from { transform: scale(1); } to { transform: scale(1.12); } }
-
-  /* ── DIFF BAR ── */
-  .diffbar {
-    flex: 0 0 var(--diffbar-h);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    background: rgba(255,255,255,.15);
-    backdrop-filter: blur(4px);
-  }
-  .diff-btn {
-    font-family: inherit;
-    font-weight: 900;
-    padding: 10px 24px;
-    border-radius: 50px;
-    border: 4px solid transparent;
-    cursor: pointer;
-    transition: all .2s;
-    font-size: 0.95rem;
-  }
-  .diff-btn.easy   { background: #5de87a; color: #0d4020; }
-  .diff-btn.medium { background: #ffb347; color: #6b2a00; }
-  .diff-btn.hard   { background: #ff5555; color: #5a0000; }
-  .diff-btn.active { transform: scale(1.1); border-color: #fff; box-shadow: 0 4px 16px rgba(0,0,0,.2); }
-  .diff-btn:not(.active):hover { transform: scale(1.05); }
 
   /* ── BOARD AREA ── */
   .board-wrap {
@@ -364,8 +341,6 @@
     box-shadow: 0 4px 14px rgba(255,215,64,.4);
   }
   .win-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,215,64,.5); }
-  .win-btn.secondary { background: #eef1ff; box-shadow: none; }
-  .win-btn.secondary:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); }
 
   /* ── PARTICLES ── */
   .particle {
@@ -387,29 +362,33 @@
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
+  /* ── RESPONSIVIDADE MOBILE ── */
   @media (max-width: 600px) {
-    .botbar { padding: 0 14px; gap: 10px; }
+    :root {
+      --topbar-h: 56px;
+      --botbar-h: 70px;
+    }
+    .topbar { padding: 0 16px; gap: 12px; }
+    .back-link { padding: 6px 14px; font-size: 1rem; }
+    .timer-wrap { padding: 4px 12px; }
+    .botbar { padding: 0 14px; }
+    .board-wrap { padding: 8px; } /* Menos padding lateral = cartas maiores */
     .moves-label, .progress-wrap, .timer-wrap .timer-icon { display: none; }
-    .diff-btn { padding: 8px 16px; font-size: 0.9rem; }
+    .reset-btn { height: 44px; padding: 0 18px; font-size: 0.95rem; }
+    .moves-box { min-width: 50px; height: 50px; font-size: 1.6rem; border-width: 2px; }
   }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <a href="index.html" class="back-btn">← Voltar</a>
-  <span class="topbar-title">🧩 Encontre os Pares!</span>
+  <a href="/index.html" class="back-link">⬅ Voltar</a>
+  <div class="topbar-spacer"></div>
   <div class="timer-wrap">
     <span class="timer-icon">⏱</span>
     <span class="timer-display" id="timerDisplay">0:00</span>
   </div>
   <button class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="Ligar/Desligar sons">🔊</button>
-</div>
-
-<div class="diffbar">
-  <button class="diff-btn easy active"  onclick="setDiff('easy')">😊 Fácil</button>
-  <button class="diff-btn medium"       onclick="setDiff('medium')">😤 Médio</button>
-  <button class="diff-btn hard"         onclick="setDiff('hard')">🔥 Difícil</button>
 </div>
 
 <div class="board-wrap">
@@ -458,7 +437,6 @@
     </div>
 
     <button class="win-btn" onclick="nextDiff()">🌟 Próximo Desafio</button>
-    <button class="win-btn secondary" onclick="resetGame();closeWin();">🔄 Jogar Novamente</button>
   </div>
 </div>
 
@@ -537,50 +515,30 @@ function toggleSound() {
 }
 
 // ── DATA ──
-//
-// Cada carta pode usar EMOJI ou IMAGEM PNG. Exemplos:
-//
-//   Emoji:  { id:1, emoji:'🐶', bg:'#FF6B6B' }
-//   Imagem: { id:1, img:'imagens/cachorro.png', bg:'#FF6B6B' }
-//
-// → "img" é o caminho relativo ao HTML (ou URL absoluta)
-// → "bg" é a cor de fundo da face revelada
-// → Misturar emoji e img no mesmo deck é permitido
-//
 const CHARS = [
-  { id:1,  img:'assets/cards/card-01.png', bg:'#FF6B6B' },
-  { id:2,  img:'assets/cards/card-02.png', bg:'#FFA94D' },
-  { id:3,  img:'assets/cards/card-03.png', bg:'#FFD740' },
-  { id:4,  img:'assets/cards/card-04.png', bg:'#5DE87A' },
-  { id:5,  img:'assets/cards/card-05.png', bg:'#C77DFF' },
-  { id:6,  img:'assets/cards/card-06.png', bg:'#FF8C6B' },
-  { id:7,  img:'assets/cards/card-07.png', bg:'#5BC8F5' },
-  { id:8,  img:'assets/cards/card-08.png', bg:'#4DD0E1' },
-  { id:9,  img:'assets/cards/card-09.png', bg:'#A26030' },
-  { id:10, img:'assets/cards/card-10.png', bg:'#FF85B3' },
-  { id:11, img:'assets/cards/card-11.png', bg:'#F25D94' },
-  { id:12, img:'assets/cards/card-12.png', bg:'#69C0FF' },
-  { id:13, img:'assets/cards/card-13.png', bg:'#FFD54F' },
-  { id:14, img:'assets/cards/card-14.png', bg:'#9C27B0' },
-  { id:15, img:'assets/cards/card-15.png', bg:'#8BC34A' },
-  { id:16, img:'assets/cards/card-16.png', bg:'#FF5722' }
+  { id:1, img:'/assets/cards/chase.svg', bg:'#1a6cbf' },
+  { id:2, img:'/assets/cards/marshall.svg', bg:'#e63946' },
+  { id:3, img:'/assets/cards/rubble.svg', bg:'#f4a228' },
+  { id:4, img:'/assets/cards/rocky.svg', bg:'#4caf50' },
+  { id:5, img:'/assets/cards/everest.svg', bg:'#9c27b0' },
+  { id:6, img:'/assets/cards/skye.svg', bg:'#ff69b4' },
+  { id:7, img:'/assets/cards/tracker.svg', bg:'#e65c00' },
+  { id:8, img:'/assets/cards/zuma.svg', bg:'#ff7043' },
 ];
 
-// ── HELPER: renderiza o conteúdo da face da carta ──
-// Suporta emoji (campo "emoji") ou imagem PNG (campo "img").
 function cardFaceContent(tile) {
   if (tile.img) {
-    return `<img class="card-img" src="${tile.img}" alt="carta ${tile.id}" draggable="false">`;
+    return `<img class="card-img" src="${tile.img}" alt="carta ${tile.id}" draggable="false" onerror="this.outerHTML='<span class=\\'emoji\\'>🐶</span>'">`;
   }
   return `<span class="emoji">${tile.emoji}</span>`;
 }
 
 const FEEDBACK = ['Uau! 🎉', 'Isso aí! 💪', 'Incrível! 🌟', 'Perfeito! ✨', 'Show! 🔥'];
 const COMBOS   = ['🔥 2x Combo!', '⚡ 3x Combo!', '💥 4x Combo!', '🌟 MEGA COMBO!'];
-const LEVELS   = {
-  easy:   { pairs: 3, cols: 3, time: 90,  starLimits: [15, 10, 6]  },
-  medium: { pairs: 6, cols: 4, time: 120, starLimits: [30, 20, 12] },
-  hard:   { pairs: 10, cols: 5, time: 180, starLimits: [50, 35, 22] }
+const LEVELS = {
+  easy:   { pairs: 2, cols: 2, time: 90,  starLimits: [12, 8, 5]  },
+  medium: { pairs: 4, cols: 4, time: 120, starLimits: [25, 16, 10] },
+  hard:   { pairs: 8, cols: 4, time: 180, starLimits: [40, 28, 18] }
 };
 const ORDER = ['easy','medium','hard'];
 
@@ -625,21 +583,16 @@ function stopTimer() { clearInterval(timerInterval); }
 
 // ── DECK BUILD ──
 function buildDeck(pairs) {
-  const chars = shuffle(CHARS).slice(0, pairs);
+  if (pairs > CHARS.length) {
+    pairs = CHARS.length;
+  }
+  const chars = shuffle([...CHARS]).slice(0, pairs);
   const tiles = [];
   chars.forEach(c => {
     tiles.push({...c, uid: c.id*100+1});
     tiles.push({...c, uid: c.id*100+2});
   });
   return shuffle(tiles);
-}
-
-// ── DIFFICULTY ──
-function setDiff(d) {
-  diff = d;
-  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.diff-btn.${d}`).classList.add('active');
-  resetGame();
 }
 
 // ── RESET ──
@@ -669,13 +622,20 @@ function renderBoard(cols) {
   board.innerHTML = '';
   const rows = Math.ceil(deck.length / cols);
   const wrap = document.querySelector('.board-wrap');
-  const GAP = 14;
-  const pw = wrap.clientWidth - 32;
-  const ph = wrap.clientHeight - 32;
+  
+  const isMobile = window.innerWidth <= 600;
+  const GAP = isMobile ? 8 : 14; 
+  const pad = isMobile ? 16 : 32; 
+
+  const pw = wrap.clientWidth - pad;
+  const ph = wrap.clientHeight - pad;
 
   const byCW = Math.floor((pw - GAP*(cols-1)) / cols);
   const byCH = Math.floor((ph - GAP*(rows-1)) / rows);
-  const cs = Math.max(70, Math.min(byCW, byCH, 200));
+  
+  // Ajuste para não forçar as cartas a ficarem pequenas demais. 
+  // O Math.min garante que caibam perfeitamente na tela.
+  const cs = Math.max(45, Math.min(byCW, byCH, 200));
 
   board.style.setProperty('--cs', cs + 'px');
   board.style.gridTemplateColumns = `repeat(${cols}, ${cs}px)`;
@@ -828,7 +788,8 @@ function closeWin() {
 function nextDiff() {
   closeWin();
   const i = ORDER.indexOf(diff);
-  setDiff(ORDER[i < ORDER.length-1 ? i+1 : 0]);
+  diff = ORDER[i < ORDER.length-1 ? i+1 : 0];
+  resetGame();
 }
 
 // ── PARTICLES ──
