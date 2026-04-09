@@ -162,6 +162,13 @@
     box-shadow: 0 6px 18px rgba(0,0,0,.2);
   }
   .card-front .emoji { font-size: calc(var(--cs, 100px) * .55); line-height: 1; }
+  .card-front .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    border-radius: 14px;
+  }
 
   /* Matched state */
   .card.matched .card-front {
@@ -438,18 +445,43 @@
 
 <script>
 // ── DATA ──
+//
+// Cada carta pode usar EMOJI ou IMAGEM PNG. Exemplos:
+//
+//   Emoji:  { id:1, emoji:'🐶', bg:'#FF6B6B' }
+//   Imagem: { id:1, img:'imagens/cachorro.png', bg:'#FF6B6B' }
+//
+// → "img" é o caminho relativo ao HTML (ou URL absoluta)
+// → "bg" é a cor de fundo da face revelada
+// → Misturar emoji e img no mesmo deck é permitido
+//
 const CHARS = [
-  { id:1,  emoji:'🐶', bg:'#FF6B6B' },
-  { id:2,  emoji:'🐱', bg:'#FFA94D' },
-  { id:3,  emoji:'🦁', bg:'#FFD740' },
-  { id:4,  emoji:'🐸', bg:'#5DE87A' },
-  { id:5,  emoji:'🐼', bg:'#C77DFF' },
-  { id:6,  emoji:'🐯', bg:'#FF8C6B' },
-  { id:7,  emoji:'🦝', bg:'#5BC8F5' },
-  { id:8,  emoji:'🐺', bg:'#4DD0E1' },
-  { id:9,  emoji:'🐻', bg:'#A26030' },
-  { id:10, emoji:'🦄', bg:'#FF85B3' }
+  { id:1,  img:'assets/cards/card-01.png', bg:'#FF6B6B' },
+  { id:2,  img:'assets/cards/card-02.png', bg:'#FFA94D' },
+  { id:3,  img:'assets/cards/card-03.png', bg:'#FFD740' },
+  { id:4,  img:'assets/cards/card-04.png', bg:'#5DE87A' },
+  { id:5,  img:'assets/cards/card-05.png', bg:'#C77DFF' },
+  { id:6,  img:'assets/cards/card-06.png', bg:'#FF8C6B' },
+  { id:7,  img:'assets/cards/card-07.png', bg:'#5BC8F5' },
+  { id:8,  img:'assets/cards/card-08.png', bg:'#4DD0E1' },
+  { id:9,  img:'assets/cards/card-09.png', bg:'#A26030' },
+  { id:10, img:'assets/cards/card-10.png', bg:'#FF85B3' },
+  { id:11, img:'assets/cards/card-11.png', bg:'#F25D94' },
+  { id:12, img:'assets/cards/card-12.png', bg:'#69C0FF' },
+  { id:13, img:'assets/cards/card-13.png', bg:'#FFD54F' },
+  { id:14, img:'assets/cards/card-14.png', bg:'#9C27B0' },
+  { id:15, img:'assets/cards/card-15.png', bg:'#8BC34A' },
+  { id:16, img:'assets/cards/card-16.png', bg:'#FF5722' }
 ];
+
+// ── HELPER: renderiza o conteúdo da face da carta ──
+// Suporta emoji (campo "emoji") ou imagem PNG (campo "img").
+function cardFaceContent(tile) {
+  if (tile.img) {
+    return `<img class="card-img" src="${tile.img}" alt="carta ${tile.id}" draggable="false">`;
+  }
+  return `<span class="emoji">${tile.emoji}</span>`;
+}
 
 const FEEDBACK = ['Uau! 🎉', 'Isso aí! 💪', 'Incrível! 🌟', 'Perfeito! ✨', 'Show! 🔥'];
 const COMBOS   = ['🔥 2x Combo!', '⚡ 3x Combo!', '💥 4x Combo!', '🌟 MEGA COMBO!'];
@@ -568,7 +600,7 @@ function renderBoard(cols) {
       <div class="card-inner">
         <div class="card-face card-back"></div>
         <div class="card-face card-front" style="background:${tile.bg}">
-          <span class="emoji">${tile.emoji}</span>
+          ${cardFaceContent(tile)}
         </div>
       </div>`;
     card.addEventListener('click', () => flip(card, idx));
