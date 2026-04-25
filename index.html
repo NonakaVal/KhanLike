@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KhanLike</title>
+<title>KhanLike — Exploradores</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,6 +16,12 @@
     --card-radius: 24px;
     --shadow-soft: 0 8px 32px rgba(0,0,0,0.13);
     --shadow-hover: 0 20px 52px rgba(0,0,0,0.22);
+    
+    /* Cores dos Temas */
+    --theme-green: #5de87a;
+    --theme-blue: #5bc8f5;
+    --theme-purple: #c77dff;
+    --theme-orange: #ffb03a;
   }
 
   body {
@@ -26,135 +32,141 @@
     color: var(--blue-deep);
   }
 
-  .stars-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .star { position: absolute; animation: floatStar linear infinite; opacity: 0; }
-  @keyframes floatStar {
-    0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.7; }
-    90%  { opacity: 0.5; }
-    100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+  /* ── BACKGROUND ANIMADO ── */
+  .stars-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0.4;
+    animation: twinkle 3s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.4; }
+    50% { transform: scale(1.3) rotate(15deg); opacity: 0.8; }
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
   }
 
   header {
-    background: rgba(26, 79, 160, 0.97);
-    backdrop-filter: blur(12px);
-    padding: 0 32px;
-    height: 72px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  header h1 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--white);
+    text-shadow: 0 4px 0 var(--blue-deep);
+    margin-bottom: 10px;
+  }
+  header p {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
   }
 
-  .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; transition: transform 0.2s; }
-  .logo:hover { transform: scale(1.04); }
-  .logo-icon {
-    width: 46px; height: 46px;
-    background: var(--yellow);
-    border-radius: 13px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.22);
-  }
-  .logo-text { font-size: 1.75rem; font-weight: 900; color: var(--white); letter-spacing: -0.5px; }
-  .logo-text span { color: var(--yellow); }
-
-  .section {
-    position: relative; z-index: 1;
-    padding: 44px 24px 64px;
-    max-width: 1040px;
-    margin: 0 auto;
-  }
-
+  /* ── GRID DE CARDS ── */
   .activities-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 22px;
+    gap: 30px;
   }
 
   .activity-card {
-    background: white;
+    background: var(--white);
     border-radius: var(--card-radius);
     overflow: hidden;
-    box-shadow: var(--shadow-soft);
-    cursor: pointer;
     text-decoration: none;
-    display: flex; flex-direction: column;
-    border: 4px solid transparent;
-    transition: all 0.32s cubic-bezier(0.25, 0.8, 0.25, 1);
-    animation: fadeUp 0.5s ease both;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow-soft);
     position: relative;
+    border: 4px solid transparent;
+    animation: slideUp 0.6s ease backwards;
   }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .activity-card:hover {
-    transform: translateY(-9px) scale(1.015);
+    transform: translateY(-12px) scale(1.02);
     box-shadow: var(--shadow-hover);
-    border-color: rgba(255,255,255,0.55);
+    border-color: var(--yellow);
   }
 
   .card-thumb {
     height: 180px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 76px;
-    transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
-    position: relative; overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    position: relative;
   }
-  .card-thumb::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.07) 100%);
-  }
-  .activity-card:hover .card-thumb { transform: scale(1.07); }
+  
+  .theme-green  { background: var(--theme-green); }
+  .theme-blue   { background: var(--theme-blue); }
+  .theme-purple { background: var(--theme-purple); }
+  .theme-orange { background: var(--theme-orange); }
 
-  .card-tag {
-    position: absolute; top: 13px; right: 13px;
-    background: rgba(255,255,255,0.92);
+  .card-body {
+    padding: 24px;
+    background: white;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 12px;
     color: var(--blue-deep);
-    font-weight: 800; font-size: 0.73rem;
-    padding: 4px 11px; border-radius: 50px;
-    z-index: 2;
-    backdrop-filter: blur(4px);
   }
 
-  .card-body { padding: 18px 22px 22px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
-  .card-title { font-size: 1.35rem; font-weight: 900; color: var(--blue-deep); line-height: 1.2; }
-  .card-desc  { font-size: 0.9rem; color: #6678aa; font-weight: 600; line-height: 1.5; flex: 1; }
+  .card-desc {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #555;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
 
-  .card-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .card-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
   .chip {
-    background: #eef3ff; border: 2px solid #d4ddfa;
-    border-radius: 50px; padding: 3px 11px;
-    font-size: 0.78rem; font-weight: 800; color: var(--blue-deep);
+    padding: 6px 14px;
+    background: #f0f4f8;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--blue-deep);
   }
-
-  .theme-blue   { background: linear-gradient(135deg, #5bc8f5 0%, #2a7fd4 100%); }
-  .theme-purple { background: linear-gradient(135deg, #c77dff 0%, #7b2fff 100%); }
-  .theme-green  { background: linear-gradient(135deg, #5de87a 0%, #1daa50 100%); }
-  .theme-orange { background: linear-gradient(135deg, #FFD740 0%, #ff9800 100%); }
-
-  .card-soon { opacity: 0.68; pointer-events: none; filter: grayscale(0.25); }
-  .card-soon .card-tag { background: #ffd740; color: #7a5000; }
 
   footer {
-    background: var(--blue-deep);
-    color: rgba(255,255,255,0.6);
     text-align: center;
-    padding: 28px 20px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    position: relative; z-index: 1;
-  }
-  footer strong { color: var(--yellow); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
+    padding: 40px;
+    color: var(--white);
+    font-weight: 600;
+    opacity: 0.8;
   }
 
-  @media (max-width: 560px) {
-    .section { padding: 28px 16px 48px; }
+  @media (max-width: 600px) {
+    header h1 { font-size: 2.5rem; }
+    .activities-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -162,68 +174,65 @@
 
 <div class="stars-bg" id="starsBg"></div>
 
-<header>
-  <a href="index.html" class="logo">
-    <div class="logo-icon">🎓</div>
-    <span class="logo-text">Khan<span>Like</span></span>
-  </a>
-</header>
+<div class="container">
+  <header>
+    <h1>KhanLike</h1>
+    <p>Aprende, joga e diverte-te com a tua turma!</p>
+  </header>
 
-<div class="section">
   <div class="activities-grid">
-
-    <a href="games/memory-game.html" class="activity-card" style="animation-delay:0.05s">
-      <div class="card-tag">🟢 Disponível</div>
-      <div class="card-thumb theme-blue">🧩</div>
-      <div class="card-body">
-        <div class="card-title">Jogo da Memória</div>
-        <div class="card-desc">Vire as cartas e encontre os pares! Treina memória e concentração.</div>
-        <div class="card-chips">
-          <span class="chip">🧠 Memória</span>
-          <span class="chip">⭐ 3 níveis</span>
-          <span class="chip">⏱ Timer</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="games/contarnumeros.html" class="activity-card" style="animation-delay:0.12s">
-      <div class="card-tag">🟢 Disponível</div>
+    
+    <!-- Jogo 1: Contagem Divertida -->
+    <a href="games/contarnumeros.html" class="activity-card" style="animation-delay:0.1s">
       <div class="card-thumb theme-green">🔢</div>
       <div class="card-body">
         <div class="card-title">Contagem Divertida</div>
-        <div class="card-desc">Aprenda a contar com objetos coloridos e animações encantadoras!</div>
+        <div class="card-desc">Quantos objetos consegues ver? Ajuda a contar e aprende os números até 25!</div>
         <div class="card-chips">
-          <span class="chip">🔢 Matemática</span>
-          <span class="chip">🌈 Colorido</span>
+          <span class="chip">🧮 Matemática</span>
+          <span class="chip">🟢 Nível 1</span>
         </div>
       </div>
     </a>
 
-    <a href="games/vogais.html" class="activity-card" style="animation-delay:0.19s">
-      <div class="card-tag">🟢 Disponível</div>
+    <!-- Jogo 2: Encontre os Pares -->
+    <a href="games/memory-game.html" class="activity-card" style="animation-delay:0.2s">
+      <div class="card-thumb theme-blue">🧩</div>
+      <div class="card-body">
+        <div class="card-title">Encontre os Pares</div>
+        <div class="card-desc">Treina a tua memória encontrando os pares de emojis escondidos nas cartas!</div>
+        <div class="card-chips">
+          <span class="chip">🧠 Memória</span>
+          <span class="chip">🔍 Lógica</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Jogo 3: Jogo das Vogais -->
+    <a href="games/vogais.html" class="activity-card" style="animation-delay:0.3s">
       <div class="card-thumb theme-purple">🔤</div>
       <div class="card-body">
         <div class="card-title">Jogo das Vogais</div>
-        <div class="card-desc">Arrasta os objetos para a vogal correta! Aprende as vogais de forma divertida.</div>
+        <div class="card-desc">Arrasta os objetos para a vogal correta e aprende as letras de forma divertida!</div>
         <div class="card-chips">
-          <span class="chip">🔤 Português</span>
+          <span class="chip">📖 Português</span>
           <span class="chip">🎯 Vogais</span>
         </div>
       </div>
     </a>
 
-    <div class="activity-card card-soon" style="animation-delay:0.26s">
-      <div class="card-tag">🔜 Em breve</div>
-      <div class="card-thumb theme-orange">🎨</div>
+    <!-- Jogo 4: Turma Animada -->
+    <a href="games/turma.html" class="activity-card" style="animation-delay:0.4s">
+      <div class="card-thumb theme-orange">🐶</div>
       <div class="card-body">
-        <div class="card-title">Mundo das Cores</div>
-        <div class="card-desc">Pinte cenários e aprenda sobre cores primárias e secundárias!</div>
+        <div class="card-title">Turma Animada</div>
+        <div class="card-desc">Conhece os mascotes da nossa turma e interage com eles neste cenário mágico!</div>
         <div class="card-chips">
-          <span class="chip">🎨 Arte</span>
-          <span class="chip">🌈 Cores</span>
+          <span class="chip">✨ Interativo</span>
+          <span class="chip">🎈 Diversão</span>
         </div>
       </div>
-    </div>
+    </a>
 
   </div>
 </div>
@@ -233,15 +242,19 @@
 </footer>
 
 <script>
-const bg = document.getElementById('starsBg');
-const em = ['⭐','✨','💫','🌟','🎈','🌈'];
-for (let i = 0; i < 16; i++) {
-  const s = document.createElement('div');
-  s.className = 'star';
-  s.textContent = em[i % em.length];
-  s.style.cssText = `left:${Math.random()*100}%;font-size:${13+Math.random()*12}px;animation-duration:${9+Math.random()*11}s;animation-delay:${Math.random()*12}s`;
-  bg.appendChild(s);
-}
+  // Gerador de estrelas decorativas no fundo
+  const bg = document.getElementById('starsBg');
+  const em = ['⭐','✨','💫','🌟','🎈','🌈'];
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.textContent = em[Math.floor(Math.random() * em.length)];
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.animationDelay = (Math.random() * 3) + 's';
+    bg.appendChild(s);
+  }
 </script>
+
 </body>
 </html>
