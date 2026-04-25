@@ -9,7 +9,6 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    /* Paleta baseada nos arquivos anteriores, usando tons roxos/rosas para diferenciar do jogo das vogais e números */
     --theme-light: #e0b3ff;
     --theme-main:  #c77dff;
     --theme-dark:  #9d4edd;
@@ -24,7 +23,7 @@
     width: 100%; 
     height: 100%; 
     overflow: hidden; 
-    touch-action: manipulation; /* Melhora a resposta de toque */
+    touch-action: manipulation;
   }
 
   body {
@@ -35,7 +34,6 @@
     user-select: none;
     color: var(--blue-deep);
   }
-
 
   .topbar {
     height: var(--topbar-h);
@@ -57,10 +55,8 @@
     border-radius: 999px;
   }
 
-  /* Espaçador para manter o título centralizado */
   .spacer { width: 44px; } 
 
-  /* ── ÁREA PRINCIPAL ── */
   .game-area {
     flex: 1;
     display: flex;
@@ -71,7 +67,6 @@
     gap: 20px;
   }
 
-  /* ── DISPLAY CENTRAL (Onde a letra e o objeto aparecem) ── */
   .display-box {
     width: 100%;
     max-width: 400px;
@@ -122,7 +117,6 @@
     text-transform: uppercase;
   }
 
-  /* ── TECLADO DO ALFABETO ── */
   .alphabet-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
@@ -156,7 +150,6 @@
     color: var(--theme-dark);
   }
 
-  /* ── ANIMAÇÕES & PARTÍCULAS ── */
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
@@ -176,7 +169,6 @@
     100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(var(--rot)); opacity: 0; }
   }
 
-  /* Responsividade para telas menores */
   @media (max-width: 400px) {
     .alphabet-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
     .letter-btn { height: 50px; font-size: 24px; }
@@ -193,7 +185,6 @@
 </div>
 
 <main class="game-area">
-  <!-- Área de exibição da letra focada -->
   <div class="display-box" id="displayBox">
     <div class="display-letter" id="displayLetter">?</div>
     <div class="display-info">
@@ -202,41 +193,141 @@
     </div>
   </div>
 
-  <!-- Grade de Letras -->
-  <div class="alphabet-grid" id="alphabetGrid">
-    <!-- Botões gerados via JavaScript -->
-  </div>
+  <div class="alphabet-grid" id="alphabetGrid"></div>
 </main>
 
 <script>
-  // Dicionário do Alfabeto: Letra, Palavra associada e Emoji correspondente.
   const alphabetData = [
-    { letter: 'A', word: 'Abelha', emoji: '🐝' },
-    { letter: 'B', word: 'Bola', emoji: '⚽' },
-    { letter: 'C', word: 'Cachorro', emoji: '🐶' },
-    { letter: 'D', word: 'Dado', emoji: '🎲' },
-    { letter: 'E', word: 'Elefante', emoji: '🐘' },
-    { letter: 'F', word: 'Foguete', emoji: '🚀' },
-    { letter: 'G', word: 'Gato', emoji: '🐱' },
-    { letter: 'H', word: 'Helicóptero', emoji: '🚁' },
-    { letter: 'I', word: 'Ilha', emoji: '🏝️' },
-    { letter: 'J', word: 'Jacaré', emoji: '🐊' },
-    { letter: 'K', word: 'Kiwi', emoji: '🥝' },
-    { letter: 'L', word: 'Leão', emoji: '🦁' },
-    { letter: 'M', word: 'Macaco', emoji: '🐵' },
-    { letter: 'N', word: 'Nuvem', emoji: '☁️' },
-    { letter: 'O', word: 'Ovelha', emoji: '🐑' },
-    { letter: 'P', word: 'Pato', emoji: '🦆' },
-    { letter: 'Q', word: 'Queijo', emoji: '🧀' },
-    { letter: 'R', word: 'Robô', emoji: '🤖' },
-    { letter: 'S', word: 'Sapo', emoji: '🐸' },
-    { letter: 'T', word: 'Trem', emoji: '🚆' },
-    { letter: 'U', word: 'Uva', emoji: '🍇' },
-    { letter: 'V', word: 'Vaca', emoji: '🐮' },
-    { letter: 'W', word: 'Wafer', emoji: '🧇' }, // Adaptado visualmente
-    { letter: 'X', word: 'Xícara', emoji: '☕' },
-    { letter: 'Y', word: 'Yin Yang', emoji: '☯️' },
-    { letter: 'Z', word: 'Zebra', emoji: '🦓' }
+    { letter: 'A', examples: [
+      { word: 'Abelha', emoji: '🐝' },
+      { word: 'Avião', emoji: '✈️' },
+      { word: 'Aranha', emoji: '🕷️' }
+    ]},
+    { letter: 'B', examples: [
+      { word: 'Bola', emoji: '⚽' },
+      { word: 'Banana', emoji: '🍌' },
+      { word: 'Borboleta', emoji: '🦋' }
+    ]},
+    { letter: 'C', examples: [
+      { word: 'Cachorro', emoji: '🐶' },
+      { word: 'Casa', emoji: '🏠' },
+      { word: 'Coração', emoji: '❤️' }
+    ]},
+    { letter: 'D', examples: [
+      { word: 'Dado', emoji: '🎲' },
+      { word: 'Dinossauro', emoji: '🦖' },
+      { word: 'Diamante', emoji: '💎' }
+    ]},
+    { letter: 'E', examples: [
+      { word: 'Elefante', emoji: '🐘' },
+      { word: 'Estrela', emoji: '⭐' },
+      { word: 'Escova', emoji: '🪥' }
+    ]},
+    { letter: 'F', examples: [
+      { word: 'Foguete', emoji: '🚀' },
+      { word: 'Flor', emoji: '🌸' },
+      { word: 'Foca', emoji: '🦭' }
+    ]},
+    { letter: 'G', examples: [
+      { word: 'Gato', emoji: '🐱' },
+      { word: 'Girafa', emoji: '🦒' },
+      { word: 'Guitarra', emoji: '🎸' }
+    ]},
+    { letter: 'H', examples: [
+      { word: 'Helicóptero', emoji: '🚁' },
+      { word: 'Hospital', emoji: '🏥' },
+      { word: 'Hambúrguer', emoji: '🍔' }
+    ]},
+    { letter: 'I', examples: [
+      { word: 'Ilha', emoji: '🏝️' },
+      { word: 'Iguana', emoji: '🦎' },
+      { word: 'Iogurte', emoji: '🍦' }
+    ]},
+    { letter: 'J', examples: [
+      { word: 'Jacaré', emoji: '🐊' },
+      { word: 'Janela', emoji: '🪟' },
+      { word: 'Joaninha', emoji: '🐞' }
+    ]},
+    { letter: 'K', examples: [
+      { word: 'Kiwi', emoji: '🥝' },
+      { word: 'Karaokê', emoji: '🎤' },
+      { word: 'Kart', emoji: '🏎️' }
+    ]},
+    { letter: 'L', examples: [
+      { word: 'Leão', emoji: '🦁' },
+      { word: 'Lua', emoji: '🌙' },
+      { word: 'Lápis', emoji: '✏️' }
+    ]},
+    { letter: 'M', examples: [
+      { word: 'Macaco', emoji: '🐵' },
+      { word: 'Maçã', emoji: '🍎' },
+      { word: 'Moto', emoji: '🏍️' }
+    ]},
+    { letter: 'N', examples: [
+      { word: 'Nuvem', emoji: '☁️' },
+      { word: 'Navio', emoji: '🚢' },
+      { word: 'Nariz', emoji: '👃' }
+    ]},
+    { letter: 'O', examples: [
+      { word: 'Ovelha', emoji: '🐑' },
+      { word: 'Ovo', emoji: '🥚' },
+      { word: 'Óculos', emoji: '👓' }
+    ]},
+    { letter: 'P', examples: [
+      { word: 'Pato', emoji: '🦆' },
+      { word: 'Pipoca', emoji: '🍿' },
+      { word: 'Peixe', emoji: '🐟' }
+    ]},
+    { letter: 'Q', examples: [
+      { word: 'Queijo', emoji: '🧀' },
+      { word: 'Quadro', emoji: '🖼️' },
+      { word: 'Quati', emoji: '🦝' }
+    ]},
+    { letter: 'R', examples: [
+      { word: 'Robô', emoji: '🤖' },
+      { word: 'Rato', emoji: '🐭' },
+      { word: 'Relógio', emoji: '⏰' }
+    ]},
+    { letter: 'S', examples: [
+      { word: 'Sapo', emoji: '🐸' },
+      { word: 'Sol', emoji: '☀️' },
+      { word: 'Sorvete', emoji: '🍨' }
+    ]},
+    { letter: 'T', examples: [
+      { word: 'Trem', emoji: '🚆' },
+      { word: 'Tigre', emoji: '🐯' },
+      { word: 'Telefone', emoji: '📞' }
+    ]},
+    { letter: 'U', examples: [
+      { word: 'Uva', emoji: '🍇' },
+      { word: 'Urso', emoji: '🐻' },
+      { word: 'Unicórnio', emoji: '🦄' }
+    ]},
+    { letter: 'V', examples: [
+      { word: 'Vaca', emoji: '🐮' },
+      { word: 'Violão', emoji: '🎸' },
+      { word: 'Vela', emoji: '🕯️' }
+    ]},
+    { letter: 'W', examples: [
+      { word: 'Wafer', emoji: '🧇' },
+      { word: 'Web', emoji: '🌐' },
+      { word: 'Walkie-talkie', emoji: '📻' }
+    ]},
+    { letter: 'X', examples: [
+      { word: 'Xícara', emoji: '☕' },
+      { word: 'Xadrez', emoji: '♟️' },
+      { word: 'Xilofone', emoji: '🎼' }
+    ]},
+    { letter: 'Y', examples: [
+      { word: 'Yin Yang', emoji: '☯️' },
+      { word: 'Yoga', emoji: '🧘' },
+      { word: 'Yakult', emoji: '🥤' }
+    ]},
+    { letter: 'Z', examples: [
+      { word: 'Zebra', emoji: '🦓' },
+      { word: 'Zíper', emoji: '🤐' },
+      { word: 'Zangão', emoji: '🐝' }
+    ]}
   ];
 
   const gridContainer = document.getElementById('alphabetGrid');
@@ -246,24 +337,25 @@
   const displayWord = document.getElementById('displayWord');
   
   let currentActiveBtn = null;
+  const exampleIndexByLetter = {};
 
-  // Sistema de Áudio usando Speech Synthesis (Nativo do Navegador)
   const AudioEngine = {
     speak: function(text) {
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Para qualquer fala em andamento
+        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'pt-BR';
-        utterance.rate = 0.9; // Um pouco mais devagar para crianças
-        utterance.pitch = 1.1; // Um tom um pouco mais agudo/alegre
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
         window.speechSynthesis.speak(utterance);
       }
     }
   };
 
-  // Inicializa o tabuleiro
   function initGame() {
     alphabetData.forEach(item => {
+      exampleIndexByLetter[item.letter] = 0;
+
       const btn = document.createElement('button');
       btn.className = 'letter-btn';
       btn.textContent = item.letter;
@@ -273,36 +365,35 @@
     });
   }
 
-  // Lida com a interação de cada letra
   function handleLetterClick(data, btnElement, event) {
-    // Gerencia o estado visual do botão
     if (currentActiveBtn) {
       currentActiveBtn.classList.remove('active');
     }
+
     btnElement.classList.add('active');
     currentActiveBtn = btnElement;
 
-    // Atualiza a UI do Display Central
-    displayLetter.textContent = data.letter;
-    displayEmoji.textContent = data.emoji;
-    displayWord.textContent = data.word;
+    const currentIndex = exampleIndexByLetter[data.letter];
+    const example = data.examples[currentIndex];
 
-    // Animação de "Pulo" no Display Central
+    exampleIndexByLetter[data.letter] = (currentIndex + 1) % data.examples.length;
+
+    displayLetter.textContent = data.letter;
+    displayEmoji.textContent = example.emoji;
+    displayWord.textContent = example.word;
+
     displayBox.classList.remove('pop');
-    void displayBox.offsetWidth; // Trigger reflow para reiniciar animação CSS
+    void displayBox.offsetWidth;
     displayBox.classList.add('pop');
 
-    // Reproduz o áudio: "A... Abelha"
-    AudioEngine.speak(`${data.letter}... ${data.word}`);
+    AudioEngine.speak(`${data.letter}... ${example.word}`);
 
-    // Cria partículas saindo do botão clicado
     const rect = btnElement.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    spawnParticles(centerX, centerY, data.emoji);
+    spawnParticles(centerX, centerY, example.emoji);
   }
 
-  // Sistema de partículas (Reutilizado do padrão KanAcademy)
   function spawnParticles(x, y, emoji) {
     const emojis = [emoji, '✨', '⭐'];
     for (let i = 0; i < 6; i++) {
@@ -325,7 +416,6 @@
     }
   }
 
-  // Inicia ao carregar a página
   window.onload = initGame;
 </script>
 </body>
