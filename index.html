@@ -22,6 +22,7 @@
     --theme-blue: #5bc8f5;
     --theme-purple: #c77dff;
     --theme-orange: #ffb03a;
+    --theme-pink: #ff7eb9;
   }
 
   body {
@@ -117,6 +118,7 @@
   .theme-blue   { background: var(--theme-blue); }
   .theme-purple { background: var(--theme-purple); }
   .theme-orange { background: var(--theme-orange); }
+  .theme-pink   { background: var(--theme-pink); }
 
   .card-body {
     padding: 24px;
@@ -182,6 +184,19 @@
 
   <div class="activities-grid">
     
+    <!-- Jogo: Alfabeto Divertido (NOVO) -->
+    <a href="games/alfabeto.html" class="activity-card" style="animation-delay:0.05s">
+      <div class="card-thumb theme-pink">🍎</div>
+      <div class="card-body">
+        <div class="card-title">Alfabeto Mágico</div>
+        <div class="card-desc">Conheces todas as letras de A a Z? Ajuda a encontrar a letra certa para cada imagem!</div>
+        <div class="card-chips">
+          <span class="chip">🔤 Português</span>
+          <span class="chip">🎯 Alfabeto</span>
+        </div>
+      </div>
+    </a>
+
     <!-- Jogo 1: Contagem Divertida -->
     <a href="games/contarnumeros.html" class="activity-card" style="animation-delay:0.1s">
       <div class="card-thumb theme-green">🔢</div>
@@ -242,7 +257,6 @@
 </footer>
 
 <script>
-  // Gerador de estrelas decorativas no fundo
   const bg = document.getElementById('starsBg');
   const em = ['⭐','✨','💫','🌟','🎈','🌈'];
   for (let i = 0; i < 20; i++) {

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Alfabeto Divertido — KanAcademy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Paleta baseada nos arquivos anteriores, usando tons roxos/rosas para diferenciar do jogo das vogais e números */
+    --theme-light: #e0b3ff;
+    --theme-main:  #c77dff;
+    --theme-dark:  #9d4edd;
+    --blue-deep:   #1a4fa0;
+    --white:       #ffffff;
+    --yellow:      #FFD740;
+    --shadow-soft: 0 8px 24px rgba(0,0,0,0.15);
+    --topbar-h:    64px;
+  }
+
+  html, body { 
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+    touch-action: manipulation; /* Melhora a resposta de toque */
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: radial-gradient(ellipse at center top, var(--theme-light), var(--theme-main));
+    display: flex; 
+    flex-direction: column; 
+    user-select: none;
+    color: var(--blue-deep);
+  }
+
+  /* ── TOP BAR (Padrão herdado) ── */
+  .topbar {
+    flex: 0 0 var(--topbar-h); 
+    background: var(--blue-deep);
+    padding: 0 20px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
+    z-index: 10;
+  }
+
+  .btn-back {
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.2); 
+    border: none; 
+    border-radius: 12px;
+    color: var(--white); 
+    font-size: 24px; 
+    cursor: pointer;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .btn-back:active { transform: scale(0.9); background: rgba(255,255,255,0.3); }
+
+  .topbar-title {
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  /* Espaçador para manter o título centralizado */
+  .spacer { width: 44px; } 
+
+  /* ── ÁREA PRINCIPAL ── */
+  .game-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* ── DISPLAY CENTRAL (Onde a letra e o objeto aparecem) ── */
+  .display-box {
+    width: 100%;
+    max-width: 400px;
+    height: 200px;
+    background: var(--white);
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    border: 6px solid rgba(255,255,255,0.5);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .display-box.pop {
+    transform: scale(1.05);
+  }
+
+  .display-letter {
+    font-size: 100px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--theme-dark);
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+  }
+
+  .display-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .display-emoji {
+    font-size: 70px;
+    line-height: 1;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .display-word {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--blue-deep);
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  /* ── TECLADO DO ALFABETO ── */
+  .alphabet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 12px;
+    width: 100%;
+    max-width: 600px;
+    padding-bottom: 30px;
+  }
+
+  .letter-btn {
+    background: var(--white);
+    border: none;
+    border-radius: 16px;
+    height: 60px;
+    font-size: 32px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    color: var(--blue-deep);
+    box-shadow: 0 6px 0px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .letter-btn:active, .letter-btn.active {
+    transform: translateY(6px);
+    box-shadow: 0 0px 0px rgba(0,0,0,0.1);
+    background: var(--yellow);
+    color: var(--theme-dark);
+  }
+
+  /* ── ANIMAÇÕES & PARTÍCULAS ── */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .particle {
+    position: absolute;
+    pointer-events: none;
+    font-size: 24px;
+    animation: popOut 0.8s cubic-bezier(0, .9, .5, 1) forwards;
+    z-index: 50;
+  }
+
+  @keyframes popOut {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(var(--rot)); opacity: 0; }
+  }
+
+  /* Responsividade para telas menores */
+  @media (max-width: 400px) {
+    .alphabet-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .letter-btn { height: 50px; font-size: 24px; }
+    .display-box { height: 160px; gap: 10px; }
+    .display-letter { font-size: 70px; }
+    .display-emoji { font-size: 50px; }
+    .display-word { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="btn-back" onclick="window.location.href='index.html'">✕</button>
+  <div class="topbar-title">Sons do Alfabeto</div>
+  <div class="spacer"></div>
+</header>
+
+<main class="game-area">
+  <!-- Área de exibição da letra focada -->
+  <div class="display-box" id="displayBox">
+    <div class="display-letter" id="displayLetter">?</div>
+    <div class="display-info">
+      <div class="display-emoji" id="displayEmoji">✨</div>
+      <div class="display-word" id="displayWord">Toque!</div>
+    </div>
+  </div>
+
+  <!-- Grade de Letras -->
+  <div class="alphabet-grid" id="alphabetGrid">
+    <!-- Botões gerados via JavaScript -->
+  </div>
+</main>
+
+<script>
+  // Dicionário do Alfabeto: Letra, Palavra associada e Emoji correspondente.
+  const alphabetData = [
+    { letter: 'A', word: 'Abelha', emoji: '🐝' },
+    { letter: 'B', word: 'Bola', emoji: '⚽' },
+    { letter: 'C', word: 'Cachorro', emoji: '🐶' },
+    { letter: 'D', word: 'Dado', emoji: '🎲' },
+    { letter: 'E', word: 'Elefante', emoji: '🐘' },
+    { letter: 'F', word: 'Foguete', emoji: '🚀' },
+    { letter: 'G', word: 'Gato', emoji: '🐱' },
+    { letter: 'H', word: 'Helicóptero', emoji: '🚁' },
+    { letter: 'I', word: 'Ilha', emoji: '🏝️' },
+    { letter: 'J', word: 'Jacaré', emoji: '🐊' },
+    { letter: 'K', word: 'Kiwi', emoji: '🥝' },
+    { letter: 'L', word: 'Leão', emoji: '🦁' },
+    { letter: 'M', word: 'Macaco', emoji: '🐵' },
+    { letter: 'N', word: 'Nuvem', emoji: '☁️' },
+    { letter: 'O', word: 'Ovelha', emoji: '🐑' },
+    { letter: 'P', word: 'Pato', emoji: '🦆' },
+    { letter: 'Q', word: 'Queijo', emoji: '🧀' },
+    { letter: 'R', word: 'Robô', emoji: '🤖' },
+    { letter: 'S', word: 'Sapo', emoji: '🐸' },
+    { letter: 'T', word: 'Trem', emoji: '🚆' },
+    { letter: 'U', word: 'Uva', emoji: '🍇' },
+    { letter: 'V', word: 'Vaca', emoji: '🐮' },
+    { letter: 'W', word: 'Wafer', emoji: '🧇' }, // Adaptado visualmente
+    { letter: 'X', word: 'Xícara', emoji: '☕' },
+    { letter: 'Y', word: 'Yin Yang', emoji: '☯️' },
+    { letter: 'Z', word: 'Zebra', emoji: '🦓' }
+  ];
+
+  const gridContainer = document.getElementById('alphabetGrid');
+  const displayBox = document.getElementById('displayBox');
+  const displayLetter = document.getElementById('displayLetter');
+  const displayEmoji = document.getElementById('displayEmoji');
+  const displayWord = document.getElementById('displayWord');
+  
+  let currentActiveBtn = null;
+
+  // Sistema de Áudio usando Speech Synthesis (Nativo do Navegador)
+  const AudioEngine = {
+    speak: function(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Para qualquer fala em andamento
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 0.9; // Um pouco mais devagar para crianças
+        utterance.pitch = 1.1; // Um tom um pouco mais agudo/alegre
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+  };
+
+  // Inicializa o tabuleiro
+  function initGame() {
+    alphabetData.forEach(item => {
+      const btn = document.createElement('button');
+      btn.className = 'letter-btn';
+      btn.textContent = item.letter;
+      
+      btn.addEventListener('click', (e) => handleLetterClick(item, btn, e));
+      gridContainer.appendChild(btn);
+    });
+  }
+
+  // Lida com a interação de cada letra
+  function handleLetterClick(data, btnElement, event) {
+    // Gerencia o estado visual do botão
+    if (currentActiveBtn) {
+      currentActiveBtn.classList.remove('active');
+    }
+    btnElement.classList.add('active');
+    currentActiveBtn = btnElement;
+
+    // Atualiza a UI do Display Central
+    displayLetter.textContent = data.letter;
+    displayEmoji.textContent = data.emoji;
+    displayWord.textContent = data.word;
+
+    // Animação de "Pulo" no Display Central
+    displayBox.classList.remove('pop');
+    void displayBox.offsetWidth; // Trigger reflow para reiniciar animação CSS
+    displayBox.classList.add('pop');
+
+    // Reproduz o áudio: "A... Abelha"
+    AudioEngine.speak(`${data.letter}... ${data.word}`);
+
+    // Cria partículas saindo do botão clicado
+    const rect = btnElement.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    spawnParticles(centerX, centerY, data.emoji);
+  }
+
+  // Sistema de partículas (Reutilizado do padrão KanAcademy)
+  function spawnParticles(x, y, emoji) {
+    const emojis = [emoji, '✨', '⭐'];
+    for (let i = 0; i < 6; i++) {
+      const el = document.createElement('div');
+      el.className = 'particle';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      
+      const tx = (Math.random() - 0.5) * 150 + 'px';
+      const ty = (Math.random() - 0.5) * 150 + 'px';
+      const rot = (Math.random() - 0.5) * 360 + 'deg';
+      
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.setProperty('--tx', tx);
+      el.style.setProperty('--ty', ty);
+      el.style.setProperty('--rot', rot);
+      
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 800);
+    }
+  }
+
+  // Inicia ao carregar a página
+  window.onload = initGame;
+</script>
+</body>
+</html>
