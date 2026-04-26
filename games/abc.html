@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Super Alfabeto — KanAcademy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/games-style.css">
+</head>
+<body class="page-abc">
+
+  <header class="topbar">
+    <a href="../index.html" class="back-btn" title="Voltar">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    </a>
+    <div class="progress-container">
+      <div id="progressFill" class="progress-fill"></div>
+    </div>
+    <div class="score-badge">
+      🌟 <span id="scoreText">0</span>
+    </div>
+  </header>
+
+  <main class="game-area" id="gameArea">
+    <section class="challenge-card">
+      <div class="challenge-title">Desafio do Alfabeto</div>
+      <div class="target-slot" id="targetSlot" onclick="readTarget()">A</div>
+      <div class="challenge-hint" id="challengeHint">Toque na letra ou arraste a figura!</div>
+    </section>
+
+    <section class="options-area" id="optionsArea"></section>
+  </main>
+
+  <div id="winOverlay" class="win-overlay">
+    <div style="font-size: 5rem; margin-bottom: 20px;">🏆</div>
+    <h1 style="font-size: 3.5rem; margin-bottom: 10px;">INCRÍVEL!</h1>
+    <p style="font-size: 1.6rem; opacity: 0.9;">Você conhece muito bem o alfabeto!</p>
+    <button class="btn-primary" onclick="resetGame()">Jogar Novamente</button>
+  </div>
+
+<script>
+  const alphabetData = [
+    { letter: 'A', word: 'Avião', emoji: '✈️' }, { letter: 'B', word: 'Bola', emoji: '⚽' },
+    { letter: 'C', word: 'Casa', emoji: '🏠' }, { letter: 'D', word: 'Dado', emoji: '🎲' },
+    { letter: 'E', word: 'Elefante', emoji: '🐘' }, { letter: 'F', word: 'Foca', emoji: '🦭' },
+    { letter: 'G', word: 'Gato', emoji: '🐱' }, { letter: 'H', word: 'Harpa', emoji: '🪕' },
+    { letter: 'I', word: 'Igreja', emoji: '⛪' }, { letter: 'J', word: 'Jacaré', emoji: '🐊' },
+    { letter: 'K', word: 'Kiwi', emoji: '🥝' }, { letter: 'L', word: 'Leão', emoji: '🦁' },
+    { letter: 'M', word: 'Macaco', emoji: '🐒' }, { letter: 'N', word: 'Navio', emoji: '🚢' },
+    { letter: 'O', word: 'Ovelha', emoji: '🐑' }, { letter: 'P', word: 'Pato', emoji: '🦆' },
+    { letter: 'Q', word: 'Queijo', emoji: '🧀' }, { letter: 'R', word: 'Rato', emoji: '🐭' },
+    { letter: 'S', word: 'Sapo', emoji: '🐸' }, { letter: 'T', word: 'Tigre', emoji: '🐯' },
+    { letter: 'U', word: 'Uva', emoji: '🍇' }, { letter: 'V', word: 'Vaca', emoji: '🐮' },
+    { letter: 'W', word: 'Wafer', emoji: '🧇' }, { letter: 'X', word: 'Xícara', emoji: '☕' },
+    { letter: 'Y', word: 'Yoga', emoji: '🧘' }, { letter: 'Z', word: 'Zebra', emoji: '🦓' }
+  ];
+
+  let score = 0;
+  const TOTAL_TO_WIN = 10;
+  const OPTIONS_PER_ROUND = 3;
+
+  let isRoundActive = false;
+  let currentChallenge = null;
+
+  const optionsArea = document.getElementById('optionsArea');
+  const progressFill = document.getElementById('progressFill');
+  const scoreText = document.getElementById('scoreText');
+  const targetSlot = document.getElementById('targetSlot');
+  const challengeHint = document.getElementById('challengeHint');
+
+  const AudioEngine = {
+    speak(text) {
+      if (!window.speechSynthesis) return;
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'pt-BR';
+      msg.rate = 1.0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(msg);
+    }
+  };
+
+  function init() {
+    score = 0;
+    updateUI();
+    startNewRound();
+  }
+
+  function startNewRound() {
+    isRoundActive = true;
+    optionsArea.innerHTML = '';
+    currentChallenge = alphabetData[Math.floor(Math.random() * alphabetData.length)];
+    
+    targetSlot.textContent = currentChallenge.letter;
+    challengeHint.textContent = `Arraste o item que começa com ${currentChallenge.letter}`;
+
+    const options = buildOptions(currentChallenge, OPTIONS_PER_ROUND);
+    options.forEach((item, index) => {
+      setTimeout(() => createOptionItem(item), index * 100);
+    });
+  }
+
+  function readTarget() {
+    if (currentChallenge) {
+      AudioEngine.speak(`${currentChallenge.letter} de ${currentChallenge.word}`);
+    }
+  }
+
+  function buildOptions(correctItem, total) {
+    const wrongOptions = alphabetData
+      .filter(item => item.letter !== correctItem.letter)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, total - 1);
+    return shuffleArray([correctItem, ...wrongOptions]);
+  }
+
+  function createOptionItem(item) {
+    const itemEl = document.createElement('div');
+    itemEl.className = 'game-item';
+    itemEl.innerHTML = `
+      <span class="item-emoji">${item.emoji}</span>
+      <span class="item-word">${item.word}</span>
+    `;
+
+    itemEl.dataset.letter = item.letter;
+    itemEl.dataset.word = item.word;
+    
+    // Configura o arrasto
+    setupDragging(itemEl);
+    optionsArea.appendChild(itemEl);
+
+    // Animação de entrada
+    itemEl.style.transform = 'scale(0)';
+    requestAnimationFrame(() => {
+      itemEl.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      itemEl.style.transform = 'scale(1)';
+    });
+  }
+
+  function setupDragging(el) {
+    let startX, startY, initialX, initialY;
+    let dragging = false;
+    let hasMoved = false;
+
+    el.onpointerdown = (e) => {
+      if (!isRoundActive || el.dataset.locked === 'true') return;
+      
+      el.setPointerCapture(e.pointerId);
+      dragging = true;
+      hasMoved = false;
+      
+      startX = e.clientX;
+      startY = e.clientY;
+      
+      const rect = el.getBoundingClientRect();
+      initialX = rect.left;
+      initialY = rect.top;
+
+      el.style.zIndex = 1000;
+    };
+
+    el.onpointermove = (e) => {
+      if (!dragging) return;
+      
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      // Define se foi um movimento ou apenas um clique
+      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        if (!hasMoved) {
+          hasMoved = true;
+          el.style.position = 'fixed';
+          el.style.width = el.offsetWidth + 'px';
+          el.style.height = el.offsetHeight + 'px';
+          el.style.transition = 'none';
+          document.body.appendChild(el);
+        }
+        el.style.left = (initialX + dx) + 'px';
+        el.style.top = (initialY + dy) + 'px';
+        checkHover(el);
+      }
+    };
+
+    el.onpointerup = (e) => {
+      if (!dragging) return;
+      dragging = false;
+
+      if (!hasMoved) {
+        // FOI APENAS UM CLIQUE: Lê a palavra e não valida resposta
+        AudioEngine.speak(el.dataset.word);
+        el.style.zIndex = 50;
+      } else {
+        // FOI UM ARRASTO: Valida se está no alvo
+        const onTarget = checkHover(el);
+        targetSlot.classList.remove('hovered');
+        
+        if (onTarget) {
+          checkAnswer(el);
+        } else {
+          returnToOptions(el);
+        }
+      }
+    };
+  }
+
+  function checkHover(el) {
+    const r = el.getBoundingClientRect();
+    const tr = targetSlot.getBoundingClientRect();
+    const cx = r.left + r.width/2;
+    const cy = r.top + r.height/2;
+    const hit = cx >= tr.left && cx <= tr.right && cy >= tr.top && cy <= tr.bottom;
+    
+    if (hit) targetSlot.classList.add('hovered');
+    else targetSlot.classList.remove('hovered');
+    
+    return hit;
+  }
+
+  function returnToOptions(el) {
+    el.style.position = 'relative';
+    el.style.left = ''; el.style.top = '';
+    el.style.width = ''; el.style.height = '';
+    el.style.zIndex = 50;
+    el.style.transition = 'transform 0.3s';
+    el.style.transform = 'scale(1)';
+    optionsArea.appendChild(el);
+  }
+
+  function checkAnswer(el) {
+    if (el.dataset.letter === currentChallenge.letter) {
+      handleSuccess(el);
+    } else {
+      handleError(el);
+    }
+  }
+
+  function handleSuccess(el) {
+    isRoundActive = false; 
+    score++;
+    el.dataset.locked = 'true';
+    
+    spawnParticles(el.getBoundingClientRect().left, el.getBoundingClientRect().top);
+    targetSlot.classList.add('correct-anim');
+    el.classList.add('correct-choice');
+
+    updateUI();
+
+    // Remove o item da tela após o acerto
+    setTimeout(() => {
+        if (el.parentElement === document.body) el.remove();
+        else el.style.visibility = 'hidden';
+    }, 100);
+
+    setTimeout(() => {
+      targetSlot.classList.remove('correct-anim');
+      if (score >= TOTAL_TO_WIN) showWin();
+      else startNewRound();
+    }, 900);
+  }
+
+  function handleError(el) {
+    targetSlot.classList.add('wrong-anim');
+    el.classList.add('wrong-choice');
+
+    setTimeout(() => {
+      targetSlot.classList.remove('wrong-anim');
+      el.classList.remove('wrong-choice');
+      if (el.parentElement === document.body) returnToOptions(el);
+    }, 500);
+  }
+
+  function updateUI() {
+    scoreText.textContent = score;
+    progressFill.style.width = Math.min((score / TOTAL_TO_WIN) * 100, 100) + '%';
+  }
+
+  function spawnParticles(x, y) {
+    for (let i = 0; i < 12; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = ['✨','⭐','🌈','🎈'][Math.floor(Math.random()*4)];
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      p.style.setProperty('--x', (Math.random()-0.5)*300 + 'px');
+      p.style.setProperty('--y', (Math.random()-0.5)*300 + 'px');
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1000);
+    }
+  }
+
+  function showWin() {
+    document.getElementById('winOverlay').classList.add('show');
+  }
+
+  function resetGame() {
+    score = 0;
+    updateUI();
+    document.getElementById('winOverlay').classList.remove('show');
+    startNewRound();
+  }
+
+  function shuffleArray(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+  window.onload = init;
+</script>
+</body>
+</html>
