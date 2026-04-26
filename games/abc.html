@@ -69,6 +69,42 @@
   const challengeHint = document.getElementById('challengeHint');
 
   const AudioEngine = {
+    ctx: null,
+
+    getContext() {
+      if (!this.ctx) {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return this.ctx;
+    },
+
+    playSuccess() {
+      try {
+        const ctx = this.getContext();
+        const now = ctx.currentTime;
+
+        const notes = [523.25, 659.25, 783.99];
+
+        notes.forEach((freq, index) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + index * 0.08);
+
+          gain.gain.setValueAtTime(0.001, now + index * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.22, now + index * 0.08 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.08 + 0.22);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + index * 0.08);
+          osc.stop(now + index * 0.08 + 0.25);
+        });
+      } catch (e) {}
+    },
+
     speak(text) {
       if (!window.speechSynthesis) return;
       const msg = new SpeechSynthesisUtterance(text);
@@ -76,6 +112,10 @@
       msg.rate = 1.0;
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(msg);
+    },
+
+    speakAfter(text, delay = 450) {
+      setTimeout(() => this.speak(text), delay);
     }
   };
 
@@ -101,7 +141,7 @@
 
   function readTarget() {
     if (currentChallenge) {
-      AudioEngine.speak(`${currentChallenge.letter} de ${currentChallenge.word}`);
+      AudioEngine.speak(currentChallenge.letter);
     }
   }
 
@@ -124,11 +164,9 @@
     itemEl.dataset.letter = item.letter;
     itemEl.dataset.word = item.word;
     
-    // Configura o arrasto
     setupDragging(itemEl);
     optionsArea.appendChild(itemEl);
 
-    // Animação de entrada
     itemEl.style.transform = 'scale(0)';
     requestAnimationFrame(() => {
       itemEl.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
@@ -164,7 +202,6 @@
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
-      // Define se foi um movimento ou apenas um clique
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
         if (!hasMoved) {
           hasMoved = true;
@@ -185,11 +222,9 @@
       dragging = false;
 
       if (!hasMoved) {
-        // FOI APENAS UM CLIQUE: Lê a palavra e não valida resposta
         AudioEngine.speak(el.dataset.word);
         el.style.zIndex = 50;
       } else {
-        // FOI UM ARRASTO: Valida se está no alvo
         const onTarget = checkHover(el);
         targetSlot.classList.remove('hovered');
         
@@ -237,6 +272,9 @@
     isRoundActive = false; 
     score++;
     el.dataset.locked = 'true';
+
+    AudioEngine.playSuccess();
+    AudioEngine.speakAfter(`${currentChallenge.letter} de ${currentChallenge.word}`, 450);
     
     spawnParticles(el.getBoundingClientRect().left, el.getBoundingClientRect().top);
     targetSlot.classList.add('correct-anim');
@@ -244,7 +282,6 @@
 
     updateUI();
 
-    // Remove o item da tela após o acerto
     setTimeout(() => {
         if (el.parentElement === document.body) el.remove();
         else el.style.visibility = 'hidden';
