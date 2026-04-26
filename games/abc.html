@@ -5,10 +5,324 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Super Alfabeto — KanAcademy</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/games-style.css">
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100vh;
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(180deg, #5bc8f5 0%, #8be3ff 45%, #fff4b8 100%);
+  overflow-x: hidden;
+  color: #18335f;
+}
+
+.topbar {
+  width: 100%;
+  height: 76px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-back {
+  text-decoration: none;
+  background: #ffffff;
+  color: #1a4fa0;
+  font-weight: 900;
+  padding: 12px 16px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+  white-space: nowrap;
+}
+
+.progress-container {
+  flex: 1;
+  height: 20px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.12);
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ffd740, #ffb300);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.stats {
+  min-width: 70px;
+  text-align: center;
+  background: #fff;
+  color: #1a4fa0;
+  font-size: 1.2rem;
+  font-weight: 900;
+  padding: 10px 14px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+}
+
+main {
+  min-height: calc(100vh - 76px);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.challenge-card {
+  width: min(440px, 100%);
+  background: rgba(255,255,255,0.72);
+  border: 5px solid rgba(255,255,255,0.9);
+  border-radius: 34px;
+  padding: 22px;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+}
+
+.challenge-title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #1a4fa0;
+  margin-bottom: 12px;
+}
+
+.letter-slot {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #1a4fa0;
+  border-radius: 38px;
+  font-size: 5.8rem;
+  font-weight: 900;
+  box-shadow: 0 12px 0 #d7ecff, 0 18px 35px rgba(0,0,0,0.16);
+  border: 6px solid #ffffff;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.letter-slot.hovered {
+  transform: scale(1.08);
+  background: #fff5bf;
+  box-shadow: 0 12px 0 #ffd740, 0 22px 42px rgba(0,0,0,0.2);
+}
+
+.letter-slot.correct-anim {
+  animation: correctPulse 0.5s ease;
+}
+
+.letter-slot.wrong-anim {
+  animation: wrongShake 0.35s ease;
+}
+
+.challenge-hint {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #31527e;
+}
+
+.items-container {
+  width: min(760px, 100%);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.draggable-item {
+  min-height: 150px;
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: grab;
+  touch-action: none;
+  box-shadow: 0 12px 0 #dbeeff, 0 18px 34px rgba(0,0,0,0.15);
+  border: 4px solid #ffffff;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+}
+
+.draggable-item:active {
+  cursor: grabbing;
+}
+
+.draggable-item .emoji {
+  font-size: 3.8rem;
+  line-height: 1;
+}
+
+.draggable-item .label {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #1a4fa0;
+  text-align: center;
+}
+
+.draggable-item.wrong-anim {
+  animation: wrongShake 0.35s ease;
+}
+
+.draggable-item.correct-choice {
+  animation: itemCorrect 0.45s ease forwards;
+}
+
+#winOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 79, 160, 0.94);
+  color: white;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  z-index: 9999;
+  padding: 24px;
+}
+
+#winOverlay.show {
+  display: flex;
+}
+
+.win-title {
+  font-size: clamp(2.7rem, 10vw, 5rem);
+  font-weight: 900;
+  margin-bottom: 14px;
+}
+
+.btn-restart {
+  margin-top: 26px;
+  border: none;
+  background: #ffd740;
+  color: #1a4fa0;
+  font-family: inherit;
+  font-size: 1.3rem;
+  font-weight: 900;
+  padding: 16px 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 8px 0 #e4aa00;
+}
+
+.particle {
+  position: fixed;
+  z-index: 9998;
+  pointer-events: none;
+  font-size: 2rem;
+  animation: particleFly 0.8s ease-out forwards;
+}
+
+@keyframes particleFly {
+  to {
+    transform: translate(var(--x), var(--y)) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes correctPulse {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.18) rotate(3deg); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wrongShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-12px); }
+  50% { transform: translateX(12px); }
+  75% { transform: translateX(-8px); }
+}
+
+@keyframes itemCorrect {
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    height: 66px;
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .btn-back {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+  }
+
+  .stats {
+    min-width: 58px;
+    font-size: 1rem;
+    padding: 9px 10px;
+  }
+
+  main {
+    padding: 12px;
+    justify-content: flex-start;
+    gap: 18px;
+  }
+
+  .challenge-card {
+    padding: 16px;
+    border-radius: 28px;
+  }
+
+  .letter-slot {
+    width: 125px;
+    height: 125px;
+    font-size: 4.5rem;
+    border-radius: 30px;
+  }
+
+  .challenge-hint {
+    font-size: 1rem;
+  }
+
+  .items-container {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .draggable-item {
+    min-height: 112px;
+    border-radius: 22px;
+    padding: 10px 4px;
+    box-shadow: 0 8px 0 #dbeeff, 0 12px 22px rgba(0,0,0,0.12);
+  }
+
+  .draggable-item .emoji {
+    font-size: 2.4rem;
+  }
+
+  .draggable-item .label {
+    font-size: 0.78rem;
+  }
+}
+</style>
 </head>
 
-<body class="page-abc">
+<body>
 
 <div class="topbar">
   <a href="../index.html" class="btn-back">⬅ Voltar</a>
