@@ -6,6 +6,9 @@
 <title>Alfabeto Divertido — KanAcademy</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/games-style.css">
+<script
+src="https://code.responsivevoice.org/responsivevoice.js?key=fmRHU1Pp"></script>
+
 </head>
 <body class="page-alfabeto">
 <div class="topbar">
@@ -158,6 +161,8 @@
     ]}
   ];
 
+
+
   const gridContainer = document.getElementById('alphabetGrid');
   const displayBox = document.getElementById('displayBox');
   const displayLetter = document.getElementById('displayLetter');
@@ -168,58 +173,65 @@
   const exampleIndexByLetter = {};
 
   const AudioEngine = {
-    speak: function(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'pt-BR';
-        utterance.rate = 0.9;
-        utterance.pitch = 1.1;
-        window.speechSynthesis.speak(utterance);
-      }
+  speak: function(letter, word) {
+    if (window.responsiveVoice) {
+      // "A de Abelha" com voz masculina natural
+      const phrase = `${letter} de ${word}`;
+      responsiveVoice.speak(phrase, "Brazilian Portuguese Male", {
+        rate: 1,
+        pitch: 1,
+        volume: 1
+      });
+    } else {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(`${letter} de ${word}`);
+      utterance.lang = 'pt-BR';
+      // Tenta forçar voz masculina no fallback do sistema
+      const voices = window.speechSynthesis.getVoices();
+      const maleVoice = voices.find(v => v.lang === 'pt-BR' && v.name.toLowerCase().includes('male'));
+      if (maleVoice) utterance.voice = maleVoice;
+      
+      window.speechSynthesis.speak(utterance);
     }
-  };
+  }
+};
 
   function initGame() {
     alphabetData.forEach(item => {
       exampleIndexByLetter[item.letter] = 0;
-
       const btn = document.createElement('button');
       btn.className = 'letter-btn';
       btn.textContent = item.letter;
-      
       btn.addEventListener('click', (e) => handleLetterClick(item, btn, e));
       gridContainer.appendChild(btn);
     });
   }
 
   function handleLetterClick(data, btnElement, event) {
-    if (currentActiveBtn) {
-      currentActiveBtn.classList.remove('active');
-    }
-
+    if (currentActiveBtn) currentActiveBtn.classList.remove('active');
     btnElement.classList.add('active');
     currentActiveBtn = btnElement;
 
     const currentIndex = exampleIndexByLetter[data.letter];
     const example = data.examples[currentIndex];
-
     exampleIndexByLetter[data.letter] = (currentIndex + 1) % data.examples.length;
 
+    // Atualiza interface
     displayLetter.textContent = data.letter;
     displayEmoji.textContent = example.emoji;
     displayWord.textContent = example.word;
 
+    // Reinicia animação
     displayBox.classList.remove('pop');
     void displayBox.offsetWidth;
     displayBox.classList.add('pop');
 
-    AudioEngine.speak(`${data.letter}... ${example.word}`);
+    // Narração aprimorada
+    AudioEngine.speak(data.letter, example.word);
 
+    // Partículas
     const rect = btnElement.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    spawnParticles(centerX, centerY, example.emoji);
+    spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, example.emoji);
   }
 
   function spawnParticles(x, y, emoji) {
@@ -228,17 +240,11 @@
       const el = document.createElement('div');
       el.className = 'particle';
       el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      
-      const tx = (Math.random() - 0.5) * 150 + 'px';
-      const ty = (Math.random() - 0.5) * 150 + 'px';
-      const rot = (Math.random() - 0.5) * 360 + 'deg';
-      
       el.style.left = x + 'px';
       el.style.top = y + 'px';
-      el.style.setProperty('--tx', tx);
-      el.style.setProperty('--ty', ty);
-      el.style.setProperty('--rot', rot);
-      
+      el.style.setProperty('--tx', (Math.random() - 0.5) * 150 + 'px');
+      el.style.setProperty('--ty', (Math.random() - 0.5) * 150 + 'px');
+      el.style.setProperty('--rot', (Math.random() - 0.5) * 360 + 'deg');
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 800);
     }

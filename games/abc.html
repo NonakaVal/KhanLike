@@ -349,16 +349,42 @@ main {
   <p style="font-size: 24px;">Você conhece muito bem o alfabeto!</p>
   <button class="btn-restart" onclick="resetGame()">Jogar de Novo</button>
 </div>
+<!-- substitua apenas o bloco <script> atual pelo seu código completo mantendo o HTML/CSS igual -->
 
 <script>
 const Sounds = {
   ctx: null,
+  voicesLoaded: false,
 
   getCtx() {
     if (!this.ctx) {
       this.ctx = new (window.AudioContext || window.webkitAudioContext)();
     }
     return this.ctx;
+  },
+
+  loadVoices() {
+    const voices = window.speechSynthesis?.getVoices?.() || [];
+    this.voicesLoaded = voices.length > 0;
+    return voices;
+  },
+
+  getMaleVoice() {
+    const voices = this.loadVoices();
+
+    const preferred = voices.find(v =>
+      v.lang.toLowerCase().includes('pt-br') &&
+      (
+        v.name.toLowerCase().includes('daniel') ||
+        v.name.toLowerCase().includes('male') ||
+        v.name.toLowerCase().includes('masculina') ||
+        v.name.toLowerCase().includes('brasil')
+      )
+    );
+
+    if (preferred) return preferred;
+
+    return voices.find(v => v.lang.toLowerCase().includes('pt')) || null;
   },
 
   speak(text) {
@@ -368,8 +394,15 @@ const Sounds = {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'pt-BR';
-    utterance.rate = 1.05;
-    utterance.pitch = 1.15;
+    utterance.rate = 0.95;
+    utterance.pitch = 0.75;
+    utterance.volume = 1;
+
+    const maleVoice = this.getMaleVoice();
+
+    if (maleVoice) {
+      utterance.voice = maleVoice;
+    }
 
     window.speechSynthesis.speak(utterance);
   },
@@ -413,6 +446,12 @@ const Sounds = {
     o.stop(ctx.currentTime + 0.3);
   }
 };
+
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    Sounds.loadVoices();
+  };
+}
 
 const DATA = [
   { letter: 'A', label: 'Avião', emoji: '✈️' },
@@ -562,6 +601,8 @@ const progressFill = document.getElementById('progressFill');
 const scoreText = document.getElementById('scoreText');
 
 function init() {
+  Sounds.loadVoices();
+
   letterSlot.addEventListener('pointerdown', () => {
     Sounds.speak(currentLetter);
   });
@@ -786,6 +827,5 @@ function shuffleArray(arr) {
 
 window.onload = init;
 </script>
-
 </body>
 </html>
