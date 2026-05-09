@@ -902,3 +902,253 @@ body.page-vogais .particle { position: absolute; pointer-events: none; font-size
 @keyframes vogais-particleOut { to { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; } }
 /* Feedback Visual do Toque */
 body.page-vogais .vowel-slot:active { transform: scale(0.95); }
+
+
+/* ==========================================================================
+   Página: formas.html
+   ========================================================================== */
+
+
+body.page-formas *, body.page-formas *::before, body.page-formas *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body.page-formas { --theme-light: #8de0ff;
+    --theme-main:  #5bc8f5;
+    --theme-dark:  #1a6fa8;
+    --blue-deep:   #1a4fa0;
+    --yellow:      #FFD740;
+    --red:         #ff5555;
+    --green:       #5DE87A;
+    --topbar-h:    64px;
+    --botbar-h:    88px; }
+html, body.page-formas { width: 100%; height: 100%; overflow: hidden; }
+body.page-formas { font-family: "Nunito", sans-serif;
+    background: radial-gradient(ellipse at center top, var(--theme-light), var(--theme-main));
+    display: flex; flex-direction: column; user-select: none; }
+/* ── TOP BAR ── */
+body.page-formas .topbar { flex: 0 0 var(--topbar-h); background: var(--blue-deep);
+    padding: 0 24px; display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.25); z-index: 10; }
+body.page-formas .back-link { color: #fff; text-decoration: none; font-size: 1.1rem; font-weight: 900;
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.15); padding: 8px 18px; border-radius: 50px;
+    transition: background 0.2s, transform 0.2s; }
+body.page-formas .back-link:hover { background: rgba(255,255,255,0.25); }
+body.page-formas .back-link:active { transform: scale(0.95); }
+body.page-formas .topbar-spacer { flex: 1; }
+body.page-formas .sound-toggle { background: rgba(255,255,255,.15); border: none; color: #fff;
+    font-size: 1.2rem; width: 44px; height: 44px; border-radius: 50px; cursor: pointer;
+    transition: background 0.2s, transform 0.2s; }
+body.page-formas .sound-toggle:active { transform: scale(0.95); }
+body.page-formas .sound-toggle.muted { opacity: 0.5; }
+body.page-formas .diff-btn { background: rgba(255,255,255,0.2); border: none; color: #fff;
+    padding: 8px 16px; border-radius: 50px; font-weight: 900; font-family: "Nunito", sans-serif;
+    cursor: pointer; transition: 0.2s; font-size: 1rem; }
+body.page-formas .diff-btn:hover { background: rgba(255,255,255,0.3); }
+body.page-formas .diff-btn:active { transform: scale(0.95); }
+/* ── BOARD AREA ── */
+body.page-formas .board-wrap { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column;
+    align-items: center; padding: 24px; overflow: hidden; position: relative;
+    max-width: 960px; margin: 0 auto; width: 100%; gap: 24px; }
+/* ── CHALLENGE CARD ── */
+body.page-formas .challenge-card { width: min(440px, 94vw);
+    background: rgba(255,255,255,0.4); backdrop-filter: blur(12px);
+    border: 4px solid rgba(255,255,255,0.5); border-radius: 36px;
+    padding: 24px; box-shadow: var(--shadow-soft);
+    text-align: center; animation: formas-cardPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes formas-cardPop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+body.page-formas .target-shape-wrap { display: flex; align-items: center; justify-content: center;
+    height: 140px; margin-bottom: 12px; }
+body.page-formas .target-shape-visual { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: formas-float 3s ease-in-out infinite alternate; }
+@keyframes formas-float { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+body.page-formas .challenge-title { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 900;
+    color: var(--blue-deep); text-transform: uppercase; letter-spacing: 1px; }
+/* ── OPTIONS ── */
+body.page-formas .options-container { display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 20px; width: min(400px, 90vw); }
+body.page-formas .shape-opt-btn { background: #fff; border: 5px solid rgba(255,255,255,0.6);
+    border-radius: 28px; padding: 20px; cursor: pointer;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.08), var(--shadow-soft);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.15s;
+    min-height: 130px; }
+body.page-formas .shape-opt-btn:hover { transform: scale(1.05); box-shadow: 0 12px 0 rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.18); }
+body.page-formas .shape-opt-btn:active { transform: scale(0.95); }
+body.page-formas .shape-opt-btn.correct { border-color: var(--green);
+    box-shadow: 0 0 0 4px var(--green), 0 0 24px rgba(93,232,122,0.4);
+    animation: formas-correctPop 0.5s ease; }
+@keyframes formas-correctPop { 0% { transform: scale(1); } 50% { transform: scale(1.12); } 100% { transform: scale(1); } }
+body.page-formas .shape-opt-btn.wrong { border-color: var(--red);
+    box-shadow: 0 0 0 4px var(--red);
+    animation: formas-shake 0.4s ease; }
+@keyframes formas-shake { 0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+/* ── BOT BAR ── */
+body.page-formas .botbar { flex: 0 0 var(--botbar-h); background: var(--blue-deep);
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 28px; box-shadow: 0 -4px 20px rgba(0,0,0,.2); }
+body.page-formas .progress-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+body.page-formas .progress-label { color: rgba(255,255,255,.75); font-size: 1rem; font-weight: 900; }
+body.page-formas .progress-track { width: 200px; height: 14px; background: rgba(255,255,255,.15);
+    border-radius: 99px; overflow: hidden; }
+body.page-formas .progress-fill { height: 100%; background: linear-gradient(90deg, var(--yellow), #ffb300);
+    border-radius: 99px; width: 0%; transition: width 0.4s cubic-bezier(.25,.8,.25,1); }
+/* ── WIN OVERLAY ── */
+body.page-formas .win-overlay { position: fixed; inset: 0; background: rgba(26,79,160,.88); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; opacity: 0; pointer-events: none; transition: opacity .4s; }
+body.page-formas .win-overlay.show { opacity: 1; pointer-events: all; }
+body.page-formas .win-box { background: #fff; border-radius: 32px; padding: 40px 48px; text-align: center;
+    max-width: 460px; width: 92%; transform: scale(0.8) translateY(20px);
+    transition: transform .5s cubic-bezier(.25,.8,.25,1); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+body.page-formas .win-overlay.show .win-box { transform: scale(1) translateY(0); }
+body.page-formas .win-box h2 { font-size: 2.4rem; font-weight: 900; color: var(--blue-deep); margin-bottom: 24px; }
+body.page-formas .win-btn { background: var(--theme-main); color: #fff; font-weight: 900; font-size: 1.2rem;
+    padding: 16px 28px; border: none; border-radius: 50px; cursor: pointer; width: 100%;
+    box-shadow: 0 6px 0 var(--theme-dark); transition: all 0.1s; }
+body.page-formas .win-btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--theme-dark); }
+/* ── PARTICLES ── */
+body.page-formas .particle { position: fixed; pointer-events: none; z-index: 9999; font-size: 32px;
+    animation: formas-particleFly 1.2s ease-out forwards; }
+@keyframes formas-particleFly { 0% { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: var(--dest) scale(0.4) rotate(var(--rot)); } }
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  body.page-formas { --topbar-h: 56px; --botbar-h: 70px; }
+  body.page-formas .topbar { padding: 0 14px; gap: 10px; }
+  body.page-formas .back-link { padding: 6px 12px; font-size: 0.95rem; }
+  body.page-formas .board-wrap { padding: 16px; gap: 16px; }
+  body.page-formas .challenge-card { padding: 16px; border-radius: 28px; }
+  body.page-formas .target-shape-wrap { height: 100px; }
+  body.page-formas .options-container { gap: 12px; }
+  body.page-formas .shape-opt-btn { padding: 14px; min-height: 100px; border-radius: 22px; }
+}
+
+
+/* ==========================================================================
+   Página: matematica.html
+   ========================================================================== */
+
+
+body.page-matematica *, body.page-matematica *::before, body.page-matematica *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body.page-matematica { --theme-light: #8ef0a4;
+    --theme-main:  #5de87a;
+    --theme-dark:  #1daa50;
+    --blue-deep:   #1a4fa0;
+    --yellow:      #FFD740;
+    --red:         #ff5555;
+    --green:       #5DE87A;
+    --topbar-h:    64px;
+    --botbar-h:    88px; }
+html, body.page-matematica { width: 100%; height: 100%; overflow: hidden; }
+body.page-matematica { font-family: "Nunito", sans-serif;
+    background: radial-gradient(ellipse at center top, var(--theme-light), var(--theme-main));
+    display: flex; flex-direction: column; user-select: none; }
+/* ── TOP BAR ── */
+body.page-matematica .topbar { flex: 0 0 var(--topbar-h); background: var(--blue-deep);
+    padding: 0 24px; display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.25); z-index: 10; }
+body.page-matematica .back-link { color: #fff; text-decoration: none; font-size: 1.1rem; font-weight: 900;
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.15); padding: 8px 18px; border-radius: 50px;
+    transition: background 0.2s, transform 0.2s; }
+body.page-matematica .back-link:hover { background: rgba(255,255,255,0.25); }
+body.page-matematica .back-link:active { transform: scale(0.95); }
+body.page-matematica .topbar-spacer { flex: 1; }
+body.page-matematica .sound-toggle { background: rgba(255,255,255,.15); border: none; color: #fff;
+    font-size: 1.2rem; width: 44px; height: 44px; border-radius: 50px; cursor: pointer;
+    transition: background 0.2s, transform 0.2s; }
+body.page-matematica .sound-toggle:active { transform: scale(0.95); }
+body.page-matematica .sound-toggle.muted { opacity: 0.5; }
+body.page-matematica .diff-btn { background: rgba(255,255,255,0.2); border: none; color: #fff;
+    padding: 8px 16px; border-radius: 50px; font-weight: 900; font-family: "Nunito", sans-serif;
+    cursor: pointer; transition: 0.2s; font-size: 1rem; }
+body.page-matematica .diff-btn:hover { background: rgba(255,255,255,0.3); }
+body.page-matematica .diff-btn:active { transform: scale(0.95); }
+/* ── BOARD AREA ── */
+body.page-matematica .board-wrap { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px; overflow: hidden; position: relative;
+    max-width: 960px; margin: 0 auto; width: 100%; gap: 30px; }
+/* ── OPERATION DISPLAY ── */
+body.page-matematica .operation-display { display: flex; align-items: center; justify-content: center;
+    gap: 12px; flex-wrap: wrap;
+    background: rgba(255,255,255,0.4); backdrop-filter: blur(12px);
+    border: 4px solid rgba(255,255,255,0.5); border-radius: 36px;
+    padding: 24px 32px; box-shadow: var(--shadow-soft);
+    animation: matematica-cardPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: min(600px, 94vw); }
+@keyframes matematica-cardPop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+body.page-matematica .emoji-group { display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 4px; max-width: 200px; }
+body.page-matematica .op-emoji { font-size: 2.4rem;
+    animation: matematica-emojiFloat 2s ease-in-out infinite alternate;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    transition: opacity 0.3s, transform 0.3s; }
+body.page-matematica .op-emoji.dimmed { opacity: 0.3; transform: scale(0.8); }
+body.page-matematica .op-emoji.removed { opacity: 0.25; transform: scale(0.75);
+    text-decoration: line-through; filter: grayscale(0.8); }
+@keyframes matematica-emojiFloat { 0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-6px) scale(1.05); } }
+body.page-matematica .op-sign { font-size: 2.8rem; font-weight: 900;
+    color: var(--blue-deep); min-width: 36px; text-align: center; }
+body.page-matematica .op-result { font-size: 3.2rem; font-weight: 900;
+    color: var(--blue-deep); min-width: 50px; text-align: center;
+    background: var(--yellow); border-radius: 18px; padding: 4px 16px;
+    box-shadow: 0 6px 0 #d4af37; }
+/* ── OPTIONS ── */
+body.page-matematica .options-container { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+body.page-matematica .opt-btn { width: 80px; height: 80px; border-radius: 24px;
+    background: #fff; border: 4px solid var(--blue-deep);
+    color: var(--blue-deep); font-size: 2.5rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 8px 0 var(--blue-deep);
+    transition: all 0.1s; }
+body.page-matematica .opt-btn:active { transform: translateY(8px); box-shadow: 0 0 0 var(--blue-deep); }
+body.page-matematica .opt-btn.correct { background: var(--theme-main); color: #fff; border-color: #fff;
+    box-shadow: 0 8px 0 var(--theme-dark); animation: matematica-correctPop 0.5s ease; }
+@keyframes matematica-correctPop { 0% { transform: scale(1); } 50% { transform: scale(1.18); } 100% { transform: scale(1); } }
+body.page-matematica .opt-btn.wrong { background: var(--red); color: #fff; border-color: #fff;
+    box-shadow: 0 8px 0 #c0392b; animation: matematica-shake 0.4s ease; }
+@keyframes matematica-shake { 0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+/* ── BOT BAR ── */
+body.page-matematica .botbar { flex: 0 0 var(--botbar-h); background: var(--blue-deep);
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 28px; box-shadow: 0 -4px 20px rgba(0,0,0,.2); }
+body.page-matematica .progress-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+body.page-matematica .progress-label { color: rgba(255,255,255,.75); font-size: 1rem; font-weight: 900; }
+body.page-matematica .progress-track { width: 200px; height: 14px; background: rgba(255,255,255,.15);
+    border-radius: 99px; overflow: hidden; }
+body.page-matematica .progress-fill { height: 100%; background: linear-gradient(90deg, var(--yellow), #ffb300);
+    border-radius: 99px; width: 0%; transition: width 0.4s cubic-bezier(.25,.8,.25,1); }
+/* ── WIN OVERLAY ── */
+body.page-matematica .win-overlay { position: fixed; inset: 0; background: rgba(26,79,160,.88); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; opacity: 0; pointer-events: none; transition: opacity .4s; }
+body.page-matematica .win-overlay.show { opacity: 1; pointer-events: all; }
+body.page-matematica .win-box { background: #fff; border-radius: 32px; padding: 40px 48px; text-align: center;
+    max-width: 460px; width: 92%; transform: scale(0.8) translateY(20px);
+    transition: transform .5s cubic-bezier(.25,.8,.25,1); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+body.page-matematica .win-overlay.show .win-box { transform: scale(1) translateY(0); }
+body.page-matematica .win-box h2 { font-size: 2.4rem; font-weight: 900; color: var(--blue-deep); margin-bottom: 24px; }
+body.page-matematica .win-btn { background: var(--theme-main); color: #fff; font-weight: 900; font-size: 1.2rem;
+    padding: 16px 28px; border: none; border-radius: 50px; cursor: pointer; width: 100%;
+    box-shadow: 0 6px 0 var(--theme-dark); transition: all 0.1s; }
+body.page-matematica .win-btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--theme-dark); }
+/* ── PARTICLES ── */
+body.page-matematica .particle { position: fixed; pointer-events: none; z-index: 9999; font-size: 32px;
+    animation: matematica-particleFly 1.2s ease-out forwards; }
+@keyframes matematica-particleFly { 0% { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: var(--dest) scale(0.4) rotate(var(--rot)); } }
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  body.page-matematica { --topbar-h: 56px; --botbar-h: 70px; }
+  body.page-matematica .topbar { padding: 0 14px; gap: 10px; }
+  body.page-matematica .back-link { padding: 6px 12px; font-size: 0.95rem; }
+  body.page-matematica .board-wrap { padding: 16px; gap: 20px; }
+  body.page-matematica .operation-display { padding: 16px 20px; border-radius: 28px; gap: 8px; }
+  body.page-matematica .op-emoji { font-size: 1.8rem; }
+  body.page-matematica .op-sign { font-size: 2rem; min-width: 28px; }
+  body.page-matematica .op-result { font-size: 2.4rem; }
+  body.page-matematica .opt-btn { width: 64px; height: 64px; font-size: 2rem; }
+}
